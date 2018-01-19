@@ -1,0 +1,70 @@
+---
+output: github_document
+---
+
+## How Do Small Area FMRs Affect the Location and Number of Units Affordable to Voucher Holders?
+
+January 5, 2018  
+
+[NYU Furman Center](http://furmancenter.org/)
+
+[Press Release](http://furmancenter.org/thestoop/entry/report-explores-how-small-area-fmrs-would-affect-availability-of-homes-affo)  
+
+[Full Brief](http://furmancenter.org/files/NYUFurmanCenter_SAFMRbrief_5JAN2018.pdf)
+
+---
+
+All of the raw files, derived data, results, and code are included in this repository. However, if you would like to re-run the entire analysis you can open the file `makefile.R` where you can install all the required packages and execute all the other scripts to download files, clean data, and create the results table as a CSV and the graph as a PNG.
+
+Each individual step in the analysis is documented with comments throughout the code, and there is a higher-level methodology at the end of the brief. 
+
+
+```{r pkgs, echo=FALSE, message=FALSE, warning=FALSE}
+library(here) # consistent file paths
+library(readr) # read/write data files
+library(dplyr) # data manipulation
+library(knitr) # kable()
+library(kableExtra) # additional formating of knitr::kable() tables
+```
+
+
+```{r table, echo=FALSE, results='asis'}
+df <- read_csv(here("results", "afford_table.csv"), col_types = "ccddddddd")
+
+# R's default round() rounds ties to nearest EVEN number, so 4.5 -> 4, and 3.5 -> 4
+# this version alsways rounds 5 to nearest number away from 0
+# https://stackoverflow.com/a/12688836/7051239
+round2 <- function(x, digits) {
+  posneg <- sign(x)
+  z <- abs(x) * 10 ^ digits
+  z <- z + 0.5
+  z <- trunc(z)
+  z <- z / 10 ^ digits
+  z * posneg
+}
+
+
+table_col_names <- c(
+  " ",
+  "Total Rental Units",
+  "FMR", "Small Area FMR",
+  "FMR", "Small Area FMR",
+  "Absolute Difference (Small Area FMR - FMR)",
+  "Percentage Change (Small Area FMR - FMR/FMR)"
+)
+
+df %>%
+  select(-hud_area_code) %>%
+  mutate_at(vars(ends_with("units")), format, digits = 0, big.mark = ",", scientific = FALSE) %>%
+  mutate_at(vars(fmr_afford_pct, safmr_afford_pct), funs(scales::percent(round2(., 3)))) %>%
+  mutate_at(vars(diff_afford_pct), funs(paste0(round2(., 1), "%"))) %>%
+  kable("html", col.names = table_col_names) %>%
+  kable_styling("basic") %>%
+  add_header_above(c("", "", "Affordable Units" = 2, "Share of Units Affordable" = 2, "", ""))
+```
+
+---
+
+![](results/rent_category_figure.png)
+
+
