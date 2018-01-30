@@ -96,6 +96,7 @@ payment_standards <- safmr_rents %>%
   semi_join(hud_study_areas, by = "hud_area_code") %>%
   left_join(adj_factors, by = "hud_area_code") %>%
   mutate(
+    hud_area_name = str_replace_all(hud_area_name, "\\s+", " "), # remove newlines
     fmr_adj = fmr / (recent_mover_factor * cpi_factor * trend_factor),
     safmr_adj = safmr / (recent_mover_factor * cpi_factor * trend_factor)
   ) %>%

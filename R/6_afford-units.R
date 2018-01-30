@@ -59,6 +59,19 @@ afford_df <- bind_rows(single_zcta_df, multi_zcta_df) %>%
   )
 
 
+# Validate Data
+
+# Confirm there are no unwanted duplicates
+stopifnot(no_dupes(afford_df))
+
+# Confirm that there are no missing values
+stopifnot(no_na_rows(afford_df))
+
+# Confirm that there are an equal number of rows by different groups
+stopifnot(equal_rows(afford_df, bedrooms))
+stopifnot(equal_rows(afford_df, rent_lo))
+
+
 # Function to summarise units ---------------------------------------------
 
 # This sums up the total and affordable units, then calculates the share
@@ -71,10 +84,10 @@ summarise_units <- function(df) {
       sum, na.rm = TRUE
     ) %>%
     mutate(
-      fmr_afford_pct = fmr_afford_units / total_units,
-      safmr_afford_pct = safmr_afford_units / total_units,
+      fmr_afford_pct = fmr_afford_units / na_if(total_units, 0),
+      safmr_afford_pct = safmr_afford_units / na_if(total_units, 0),
       diff_afford_units = safmr_afford_units - fmr_afford_units,
-      diff_afford_pct = (diff_afford_units / fmr_afford_units) * 100
+      diff_afford_pct = (diff_afford_units / na_if(fmr_afford_units, 0)) * 100
     )
 }
 
@@ -123,7 +136,7 @@ rent_cat_table <- afford_df %>%
   )
 
 
-# Validata rent category data
+# Validate rent category data
 
 stopifnot(no_na_rows(zcta_rent_cat))
 stopifnot(no_dupes(zcta_rent_cat, hud_area_code, zcta))
@@ -158,8 +171,20 @@ rent_cat_table %>%
 ggsave(here("results", "rent_category_figure.png"), width = 7, height = 5, units = "in")
 
 
-# Create Results Tables ---------------------------------------------------
 
+
+# ZCTA-Level file ---------------------------------------------------------
+
+zcta_affford_table <- afford_df %>% 
+  group_by(hud_area_code, hud_area_name, zcta) %>% 
+  summarise_units() %>%
+  ungroup()
+  
+
+write_csv(zcta_affford_table, here("results", "zcta_afford_table.csv"), na = "")
+
+
+# Create Metro Area Results Tables ----------------------------------------
 
 # For each HUD_area sum up the various unit counts, then do the same for all the
 # areas overall, and stack them together into the final table of results.
@@ -188,19 +213,6 @@ final_afford_table <- bind_rows(total_afford_table, metro_afford_table) %>%
   arrange(hud_area_name)
 
 
-# Validate Data results table
-
-# Confirm there are no unwanted duplicates
-stopifnot(no_dupes(afford_df))
-
-# Confirm that there are no missing values
-stopifnot(no_na_rows(afford_df))
-
-# Confirm that there are an equal number of rows by different groups
-stopifnot(equal_rows(afford_df, bedrooms))
-stopifnot(equal_rows(afford_df, rent_lo))
-
-
 # Save Data ---------------------------------------------------------------
 
-write_csv(final_afford_table, here("results", "afford_table.csv"))
+write_csv(final_afford_table, here("results", "metro_afford_table.csv"))

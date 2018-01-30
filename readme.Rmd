@@ -10,11 +10,13 @@ January 5, 2018
 
 [Press Release](http://furmancenter.org/thestoop/entry/report-explores-how-small-area-fmrs-would-affect-availability-of-homes-affo)  
 
-[Full Brief](http://furmancenter.org/files/NYUFurmanCenter_SAFMRbrief_5JAN2018.pdf)
+[Full Brief](http://furmancenter.org/files/NYUFurmanCenter_SAFMRbrief_22Jan2018.pdf)
+
+[ZCTA and Metro Area Excel Data Download](https://github.com/FurmanCenter/safmr/raw/master/NYU-Furman-Center_SAFMR.xlsx)
 
 ---
 
-All of the raw files, derived data, results, and code are included in this repository. However, if you would like to re-run the entire analysis you can open the file `makefile.R` where you can install all the required packages and execute all the other scripts to download files, clean data, and create the results table as a CSV and the graph as a PNG.
+All of the raw files, derived data, results, and code are included in this repository. However, if you would like to re-run the entire analysis you can open the file `makefile.R` where you can install all the required packages and execute all the other scripts to download files, clean data, and create the results table as a CSV and the graph as a PNG. The Metro area and ZCTA data files from the results folder are included in the Excel file linked above, which also has links to the report and column descriptions.
 
 Each individual step in the analysis is documented with comments throughout the code, and there is a higher-level methodology at the end of the brief. 
 
@@ -29,7 +31,7 @@ library(kableExtra) # additional formating of knitr::kable() tables
 
 
 ```{r table, echo=FALSE, results='asis'}
-df <- read_csv(here("results", "afford_table.csv"), col_types = "ccddddddd")
+df <- read_csv(here("results", "metro_afford_table.csv"), col_types = "ccddddddd")
 
 # R's default round() rounds ties to nearest EVEN number, so 4.5 -> 4, and 3.5 -> 4
 # this version alsways rounds 5 to nearest number away from 0
