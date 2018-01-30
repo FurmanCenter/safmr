@@ -4,13 +4,9 @@ output: github_document
 
 ## How Do Small Area FMRs Affect the Location and Number of Units Affordable to Voucher Holders?
 
-January 5, 2018  
+`r Sys.Date()`
 
-[NYU Furman Center](http://furmancenter.org/)
-
-[Press Release](http://furmancenter.org/thestoop/entry/report-explores-how-small-area-fmrs-would-affect-availability-of-homes-affo)  
-
-[Full Brief](http://furmancenter.org/files/NYUFurmanCenter_SAFMRbrief_22Jan2018.pdf)
+[Full Brief](http://furmancenter.org/research/publication/how-do-small-area-fmrs-affect-the-location-and-number-of-units-affordable-t)
 
 [ZCTA and Metro Area Excel Data Download](https://github.com/FurmanCenter/safmr/raw/master/NYU-Furman-Center_SAFMR.xlsx)
 
